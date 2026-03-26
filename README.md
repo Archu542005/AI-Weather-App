@@ -244,25 +244,7 @@ A modern, responsive weather web application with AI-powered smart suggestions, 
 - Improve accessibility
 - Add weather history
 
-## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🙏 Acknowledgments
-
-- [OpenWeatherMap](https://openweathermap.org/) for weather API
-- [Google Fonts](https://fonts.google.com/) for Inter font family
-- [Font Awesome](https://fontawesome.com/) for icons (if used)
-- Weather icons from [OpenWeatherMap](https://openweathermap.org/weather-conditions)
-
-## 📞 Contact
-
-- **Author**: Your Name
-- **Email**: your.email@example.com
-- **GitHub**: [@yourusername](https://github.com/yourusername)
-- **Portfolio**: [your-website.com](https://your-website.com)
-
-## 🌟 Show Your Support
 
 If you like this project, please give it a ⭐ on GitHub!
 
