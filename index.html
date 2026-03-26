@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Weather App</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Video Background -->
+    <video class="video-background" autoplay muted loop playsinline>
+        <source src="Video.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+    
+    <!-- Video Overlay -->
+    <div class="video-overlay"></div>
+    
+    <!-- Animated Weather Elements -->
+    <div class="weather-animation-container">
+        <!-- Rain Animation -->
+        <div class="rain-animation" id="rainAnimation"></div>
+        
+        <!-- Sun Animation -->
+        <div class="sun-animation" id="sunAnimation">
+            <div class="sun"></div>
+            <div class="sun-ray"></div>
+            <div class="sun-ray"></div>
+            <div class="sun-ray"></div>
+            <div class="sun-ray"></div>
+            <div class="sun-ray"></div>
+            <div class="sun-ray"></div>
+            <div class="sun-ray"></div>
+            <div class="sun-ray"></div>
+        </div>
+        
+        <!-- Cloud Animation -->
+        <div class="cloud-animation" id="cloudAnimation">
+            <div class="cloud cloud1"></div>
+            <div class="cloud cloud2"></div>
+        </div>
+        
+        <!-- Stars Animation -->
+        <div class="stars-animation" id="starsAnimation"></div>
+        
+        <!-- Moon -->
+        <div class="moon" id="moon" style="display: none;"></div>
+    </div>
+    
+    <div class="container">
+        <header class="header">
+            <h1 class="app-title">AI Weather App</h1>
+        </header>
+
+        <main class="main-content">
+            <!-- Search Section -->
+            <section class="search-section">
+                <div class="search-container">
+                    <input 
+                        type="text" 
+                        id="cityInput" 
+                        class="search-input" 
+                        placeholder="Enter city name..."
+                        autocomplete="off"
+                    >
+                    <button id="searchBtn" class="search-btn" title="Search weather">
+                        <svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                    </button>
+                    <button id="voiceBtn" class="voice-btn" title="Voice search">
+                        <svg class="voice-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path>
+                        </svg>
+                    </button>
+                    <button id="locationBtn" class="location-btn" title="Use current location">
+                        <svg class="location-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        </svg>
+                    </button>
+                </div>
+            </section>
+
+            <!-- Loading Animation -->
+            <div id="loadingSpinner" class="loading-spinner hidden">
+                <div class="spinner"></div>
+                <p>Fetching weather data...</p>
+            </div>
+
+            <!-- Error Message -->
+            <div id="errorMessage" class="error-message hidden">
+                <div class="error-content">
+                    <svg class="error-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <p id="errorText">Something went wrong. Please try again.</p>
+                </div>
+            </div>
+
+            <!-- Current Weather Section -->
+            <section id="currentWeather" class="current-weather hidden">
+                <div class="weather-card">
+                    <div class="weather-header">
+                        <div class="location-info">
+                            <h2 id="cityName" class="city-name">City Name</h2>
+                            <p id="currentDate" class="current-date">Date</p>
+                        </div>
+                        <div class="weather-header-actions">
+                            <button id="favoriteBtn" class="favorite-btn" title="Add to favorites">
+                                <svg class="heart-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                                </svg>
+                            </button>
+                            <div class="weather-icon-container">
+                                <img id="weatherIcon" src="" alt="Weather icon" class="weather-icon">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="temperature-section">
+                        <div class="main-temp">
+                            <span id="temperature" class="temperature">--°</span>
+                            <span id="feelsLike" class="feels-like">Feels like --°</span>
+                        </div>
+                        <div class="weather-description">
+                            <p id="weatherDescription" class="weather-desc">--</p>
+                        </div>
+                    </div>
+
+                    <div class="weather-details">
+                        <div class="detail-item">
+                            <svg class="detail-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"></path>
+                            </svg>
+                            <div>
+                                <p class="detail-label">Humidity</p>
+                                <p id="humidity" class="detail-value">--%</p>
+                            </div>
+                        </div>
+                        
+                        <div class="detail-item">
+                            <svg class="detail-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                            </svg>
+                            <div>
+                                <p class="detail-label">Wind Speed</p>
+                                <p id="windSpeed" class="detail-value">-- m/s</p>
+                            </div>
+                        </div>
+                        
+                        <div class="detail-item">
+                            <svg class="detail-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"></path>
+                            </svg>
+                            <div>
+                                <p class="detail-label">Pressure</p>
+                                <p id="pressure" class="detail-value">-- hPa</p>
+                            </div>
+                        </div>
+                        
+                        <div class="detail-item">
+                            <svg class="detail-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                            </svg>
+                            <div>
+                                <p class="detail-label">Visibility</p>
+                                <p id="visibility" class="detail-value">-- km</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- AI Suggestions Section -->
+            <section id="aiSuggestions" class="ai-suggestions hidden">
+                <div class="suggestions-card">
+                    <h3 class="suggestions-title">
+                        <svg class="suggestions-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                        </svg>
+                        Smart Suggestions
+                    </h3>
+                    <div id="suggestionsList" class="suggestions-list">
+                        <!-- Suggestions will be added dynamically -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- 5-Day Forecast Section -->
+            <section id="forecast" class="forecast-section hidden">
+                <h3 class="forecast-title">5-Day Forecast</h3>
+                <div id="forecastCards" class="forecast-cards">
+                    <!-- Forecast cards will be added dynamically -->
+                </div>
+            </section>
+
+            <!-- Favorite Cities Section -->
+            <section id="favoriteCities" class="favorite-cities-section">
+                <h3 class="favorite-title">
+                    <span class="weather-emoji">❤️</span>
+                    Favorite Cities
+                </h3>
+                <div id="favoriteCitiesList" class="favorite-cities-list">
+                    <!-- Favorite cities will be added dynamically -->
+                </div>
+            </section>
+        </main>
+
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav">
+            <button class="nav-btn active" data-section="search" title="Search">
+                <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                </svg>
+                <span>Search</span>
+            </button>
+            <button class="nav-btn" data-section="favorites" title="Favorites">
+                <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                </svg>
+                <span>Favorites</span>
+            </button>
+            <button class="nav-btn" data-section="location" title="Current Location">
+                <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                </svg>
+                <span>Location</span>
+            </button>
+            <button class="nav-btn" data-section="voice" title="Voice Search">
+                <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path>
+                </svg>
+                <span>Voice</span>
+            </button>
+        </nav>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
